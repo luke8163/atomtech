@@ -1,15 +1,21 @@
 master:
   image: redis:3.2.9
+  ports:
+    - 6379:6379/tcp
 slave:
   image: redis:3.2.9
   command: redis-server --slaveof redis-master 6379
   links:
     - master:redis-master
+  ports:
+    - 6380-6381:6379/tcp
 sentinel:
   build: sentinel
   environment:
     - SENTINEL_DOWN_AFTER=5000
-    - SENTINEL_FAILOVER=5000    
+    - SENTINEL_FAILOVER=5000
+  ports:
+    - 26379-26381:26379/tcp
   links:
     - master:redis-master
     - slave
